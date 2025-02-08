@@ -4,12 +4,12 @@ import { createRouter, createWebHistory } from "vue-router";
 export const constantRoutes = [
   {
     path: "/",
-    redirect: "/form-test",
+    redirect: "/form-create-test",
   },
   // 测试动态表单
   {
-    path: "/form-test",
-    component: () => import("~/test/form-test.vue"),
+    path: "/form-create-test",
+    component: () => import("~/test/form-create-test.vue"),
   },
   // 测试tooltips
   {

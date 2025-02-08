@@ -4,7 +4,7 @@
 
 <script setup>
 import { ref } from "vue";
-import FormCreate from "@/components/form-create/index.vue";
+import { FormCreate } from "@/components/index.js";
 
 const formConfig = ref({
   model: {

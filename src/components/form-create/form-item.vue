@@ -8,11 +8,11 @@
       <!-- 展示类型的字段 -->
       <template v-else>
         <el-col
-          class="easy-form-col"
+          class="form-create-col"
           v-bind="{ ...formLayout.col, span: formItem.span || (formLayout.col && formLayout.col.span) }"
         >
           <el-form-item
-            class="easy-form-item"
+            class="form-create-item"
             :class="{ 'hide-field-label': formItem.labelWidth === 0 || formLayout.labelWidth === 0 }"
             :label="formItem.label"
             :prop="formItem.prop || formItem.field"
@@ -98,7 +98,6 @@
                 @change="handleEffectChanged"
                 @focus="handleFieldFocus"
                 v-on="fieldEvents"
-                popper-class="easy-form-select-custom-class"
               >
                 <el-option
                   v-for="(cItem, cIndex) in (formItem.props && formItem.props.options) || []"
@@ -245,23 +244,23 @@
             <!-- 子级表单 -->
             <template v-if="formItem.type === 'children'">
               <el-row
-                class="easy-form-row has-buttons"
+                class="form-create-row has-buttons"
                 type="flex"
                 v-bind="formLayout.row"
                 v-for="(childModel, childIndex) in currentValue || []"
                 :key="childIndex"
                 :span="24"
               >
-                <EasyFormItem
+                <FormCreateItem
                   v-for="(cItem, cIndex) in formItem.children || []"
-                  :key="`easy-form-item-${cItem.field}`"
-                  :ref="`easy-form-item-${cItem.field}`"
+                  :key="`form-create-item-${cItem.field}`"
+                  :ref="`form-create-item-${cItem.field}`"
                   :item="cItem"
                   :model="childModel"
                   :rules="formRules"
                   :layout="formLayout"
-                ></EasyFormItem>
-                <div class="easy-form-item-buttons">
+                />
+                <div class="form-create-item-buttons">
                   <el-button
                     type="primary"
                     icon="Plus"
@@ -296,7 +295,7 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick, getCurrentInstance, inject } from "vue";
-import useEasyFormItem from "@/hooks/easy-form-item.js";
+import useFormCreateItem from "@/hooks/form-create-item.js";
 import InputNumberRange from "./components/input-number-range.vue";
 import axios from "axios";
 
@@ -408,16 +407,16 @@ const { proxy } = getCurrentInstance();
 // 组件用的字段loading
 const fieldLoading = ref(false);
 
-// 使用easy-form表单组件的hooks
-const easyFormItem = useEasyFormItem({ props, emits, ref: proxy, formRef });
+// 使用form-create表单组件的hooks
+const formCreateItem = useFormCreateItem({ props, emits, ref: proxy, formRef });
 
 // 声明周期
 onMounted(() => {
   initField();
 
   // 将操作字段方法绑定到当前实例
-  for (let name in easyFormItem) {
-    proxy[name] = easyFormItem[name];
+  for (let name in formCreateItem) {
+    proxy[name] = formCreateItem[name];
   }
 });
 
@@ -675,7 +674,6 @@ const _filterOptions = (source) => {
  * 根据字符串属性路径获取目标对象的值
  * @example
  * let res = {code:200, data:{rows:[], pages:{current:1,pageSize:20}}}
- * this._getTargetValueByPath(res, 'data.pages.pageSize'); // 这里会输出20
  * @param {Object} target 目标对象
  * @param {String} path 字符串属性路径
  * @returns {Object} 返回目标对象
@@ -713,7 +711,6 @@ const _getTargetByPath = (target, path = "data") => {
  * 根据字符串属性路径设置目标对象的值
  * @example
  * let res = {code:200, data:{rows:[], pages:{current:1,pageSize:20}}}
- * this._setTargetValueByPath(res, 'data.pages.pageSize', 30); // 打印res对象会发现pageSize的值改为了30
  * @param {Object} target 目标对象
  * @param {String} path 字符串属性路径
  * @param {*} value 值
@@ -773,13 +770,13 @@ defineExpose({
   formRules: props.rules,
   formLayout: props.layout,
   ref: proxy,
-  ...easyFormItem,
+  ...formCreateItem,
 });
 </script>
 
 <style scoped lang="scss">
-.easy-form-col {
-  :deep(.easy-form-item) {
+.form-create-col {
+  :deep(.form-create-item) {
     margin-bottom: 16px;
 
     &.hide-field-label {
@@ -792,13 +789,13 @@ defineExpose({
       }
     }
 
-    .easy-form-row {
+    .form-create-row {
       width: 100%;
-      // 包含按钮操作
+      /* 包含按钮操作 */
       &.has-buttons {
         position: relative;
 
-        .easy-form-item-buttons {
+        .form-create-item-buttons {
           position: absolute;
           top: 0;
           bottom: 0;
@@ -821,7 +818,7 @@ defineExpose({
         flex-shrink: 0;
       }
 
-      // 日期区间
+      /* 日期区间 */
       > .el-date-editor--daterange {
         flex-grow: 0;
         box-sizing: border-box;
@@ -833,7 +830,7 @@ defineExpose({
         }
       }
 
-      // 数字输入框
+      /* 数字输入框 */
       > .input-number-range-wrapper {
         .el-input-number {
           flex: 1;
@@ -841,7 +838,7 @@ defineExpose({
         }
       }
 
-      //  级联选择
+      /* 级联选择 */
       > .el-cascader {
         .el-input {
           .el-input__inner {
@@ -868,10 +865,5 @@ defineExpose({
       }
     }
   }
-}
-</style>
-<style lang="scss">
-.easy-form-select-custom-class {
-  z-index: 9999 !important;
 }
 </style>

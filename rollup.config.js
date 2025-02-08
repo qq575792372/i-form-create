@@ -1,10 +1,10 @@
-// 使用插件
-// rollup的插件
+// rollup插件
 import commonjs from "@rollup/plugin-commonjs";
 import alias from "@rollup/plugin-alias";
+import json from "@rollup/plugin-json";
 import postcss from "rollup-plugin-postcss";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-// vue的插件
+// vue插件
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import autoprefixer from "autoprefixer";
@@ -71,7 +71,7 @@ export default {
     },
   ],
   // 排除模块
-  external: ["vue"],
+  external: ["vue", "axios", /^element-plus\/.*/],
   // 使用插件
   plugins: [
     vue(),
@@ -83,6 +83,7 @@ export default {
     vueJsx(),
     nodeResolve(),
     commonjs(),
+    json(),
     // 处理文件中的别名为相对路径
     alias({
       entries: [
@@ -92,7 +93,7 @@ export default {
         },
         {
           find: "@",
-          replacement: pathResolve(outputSrc, "./"),
+          replacement: pathResolve(inputSrc, "./"),
         },
       ],
     }),

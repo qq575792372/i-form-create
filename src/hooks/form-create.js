@@ -1,25 +1,25 @@
 /**
- * easy-form表单组件的hooks
+ * form-create表单组件的hooks
  */
 
-export default function ({props, emits, formRef}) {
+export default function ({ props, emits, formRef }) {
   // 实例方法
   /**
    * 获取表单实例
    * @returns {Ref} 当前表单的实例
    */
   const getFormRef = function () {
-    return formRef
-  }
+    return formRef;
+  };
   /**
    * 获取字段实例
    * @param {String} field 字段名称
    * @returns {Ref} 当前字段的实例
    */
   const getFieldRef = function (field) {
-    let fieldName = `easy-form-item-${field}`
-    return formRef.$refs[fieldName] && formRef.$refs[fieldName][0]
-  }
+    let fieldName = `form-create-item-${field}`;
+    return formRef.$refs[fieldName] && formRef.$refs[fieldName][0];
+  };
 
   // 字段方法
   /**
@@ -28,16 +28,16 @@ export default function ({props, emits, formRef}) {
    * @returns {Object} 当前字段的配置
    */
   const getField = function (field) {
-    return props.fields.find(item => item.field === field) || {}
-  }
+    return props.fields.find((item) => item.field === field) || {};
+  };
   /**
    * 获取字段下标
    * @param {String} field 字段名称
    * @returns {Object} 当前字段的下标
    */
   const getFieldIndex = function (field) {
-    return props.fields.findIndex(v => v.field === field)
-  }
+    return props.fields.findIndex((v) => v.field === field);
+  };
 
   // 字段值
   /**
@@ -46,8 +46,8 @@ export default function ({props, emits, formRef}) {
    * @returns {(String|Number|Array|Boolean)} 当前字段的值
    */
   const getValue = function (field) {
-    return props.model[field]
-  }
+    return props.model[field];
+  };
   /**
    * 设置字段值
    * @param {String} field 字段名称
@@ -56,22 +56,23 @@ export default function ({props, emits, formRef}) {
    */
   const setValue = function (field, value, setFieldDesc = true) {
     // 设置字段的值
-    props.model[field] = value
+    props.model[field] = value;
 
     // 设置字段描述的值
     if (setFieldDesc) {
-      const item = getField(field)
+      const item = getField(field);
       // 如果值是空，也会清空对应的fieldDesc的值
       if (value) {
-        let labelKey = _getLabelValue(item)['labelKey']
-        let valueKey = _getLabelValue(item)['valueKey']
-        const current = (item.props && item.props.options && item.props.options.find(v => v[valueKey] === value)) || {}
-        props.model[item['fieldDesc']] = current[labelKey]
+        let labelKey = _getLabelValue(item)["labelKey"];
+        let valueKey = _getLabelValue(item)["valueKey"];
+        const current =
+          (item.props && item.props.options && item.props.options.find((v) => v[valueKey] === value)) || {};
+        props.model[item["fieldDesc"]] = current[labelKey];
       } else {
-        props.model[item['fieldDesc']] = ''
+        props.model[item["fieldDesc"]] = "";
       }
     }
-  }
+  };
 
   // 字段默认值
   /**
@@ -80,20 +81,20 @@ export default function ({props, emits, formRef}) {
    * @returns {(String|Number|Array|Boolean)} 当前字段的默认值
    */
   const getDefaultValue = function (field) {
-    const item = getField(field)
-    return item.defaultValue
-  }
+    const item = getField(field);
+    return item.defaultValue;
+  };
   /**
    * 设置字段默认值
    * @param {String} field 字段名称
    * @param {Any} defaultValue 字段的默认值
    */
   const setDefaultValue = function (field, defaultValue) {
-    const itemIndex = getFieldIndex(field)
+    const itemIndex = getFieldIndex(field);
     if (itemIndex > -1) {
-      props.fields[itemIndex]['defaultValue'] = defaultValue
+      props.fields[itemIndex]["defaultValue"] = defaultValue;
     }
-  }
+  };
 
   // 字段属性
   /**
@@ -102,9 +103,9 @@ export default function ({props, emits, formRef}) {
    * @returns {Object} 当前字段的props
    */
   const getProps = function (field) {
-    const item = getField(field)
-    return item.props
-  }
+    const item = getField(field);
+    return item.props;
+  };
   /**
    * 设置字段属性
    * @param {String} field 字段名称
@@ -112,11 +113,14 @@ export default function ({props, emits, formRef}) {
    * @param {Any} value 属性值
    */
   const setProps = function (field, key, value) {
-    const itemIndex = getFieldIndex(field)
+    const itemIndex = getFieldIndex(field);
     if (itemIndex > -1) {
-      props.fields[itemIndex].props[key] = value
+      if (!props.fields[itemIndex].props) {
+        props.fields[itemIndex].props = {};
+      }
+      props.fields[itemIndex].props[key] = value;
     }
-  }
+  };
 
   // 字段校验
   /**
@@ -126,9 +130,9 @@ export default function ({props, emits, formRef}) {
    * @returns {Array} 当前字段的rules数组
    */
   const getRules = function (field) {
-    const item = getField(field)
-    return item && item.rules ? item.rules : props.rules[field]
-  }
+    const item = getField(field);
+    return item && item.rules ? item.rules : props.rules[field];
+  };
   /**
    * 设置字段的rules
    * @param {String} field 字段名称
@@ -137,14 +141,14 @@ export default function ({props, emits, formRef}) {
    */
   const setRules = function (field, rules, priority = true) {
     if (priority) {
-      const itemIndex = getFieldIndex(field)
+      const itemIndex = getFieldIndex(field);
       if (itemIndex > -1) {
-        props.fields[itemIndex]['rules'] = rules
+        props.fields[itemIndex]["rules"] = rules;
       }
     } else {
-      props.rules[field] = rules
+      props.rules[field] = rules;
     }
-  }
+  };
 
   // 字段选项数据
   /**
@@ -152,40 +156,40 @@ export default function ({props, emits, formRef}) {
    * @param {String} field 字段名称
    */
   const getOptions = function (field) {
-    const item = getField(field)
-    return (item.props && item.props.options) || []
-  }
+    const item = getField(field);
+    return (item.props && item.props.options) || [];
+  };
   /**
    * 设置单个字段选项数据
    * @param {String} field 字段名称
    * @param {Array} arr 设置的数组值
    */
   const setOptions = function (field, arr = []) {
-    const itemIndex = getFieldIndex(field)
+    const itemIndex = getFieldIndex(field);
     if (itemIndex > -1) {
-      props.fields[itemIndex].props['options'] = arr
+      props.fields[itemIndex].props["options"] = arr;
     }
-  }
+  };
   // 字段请求配置
   /**
    * 获取单个字段的请求配置数据
    * @param {String} field 字段名称
    */
   const getRequest = function (field) {
-    const item = getField(field)
-    return item.request || {}
-  }
+    const item = getField(field);
+    return item.request || {};
+  };
   /**
    * 设置单个字段的请求配置数据
    * @param {String} field 字段名称
    * @param {Object} setting 请求的配置
    */
-  const setRequest = function (field, setting = {url: '', method: 'get', params: {}, dataName: 'data.result'}) {
-    const itemIndex = getFieldIndex(field)
+  const setRequest = function (field, setting = { url: "", method: "get", params: {}, dataName: "data.result" }) {
+    const itemIndex = getFieldIndex(field);
     if (itemIndex > -1) {
-      props.fields[itemIndex].request = {...props.fields[itemIndex].request, ...setting}
+      props.fields[itemIndex].request = { ...props.fields[itemIndex].request, ...setting };
     }
-  }
+  };
 
   /** ******************* 组件内部函数使用的方法 ******************** */
   /**
@@ -197,16 +201,16 @@ export default function ({props, emits, formRef}) {
    */
   const _getLabelValue = function (item) {
     // 获取配置中的键名和值名，支持以下几种写法
-    const labelKey = item.props['labelKey'] || item.props['label-key']
-    const valueKey = item.props['valueKey'] || item.props['value-key']
-    const childrenKey = item.props['childrenKey'] || item.props['children-key']
+    const labelKey = item.props["labelKey"] || item.props["label-key"];
+    const valueKey = item.props["valueKey"] || item.props["value-key"];
+    const childrenKey = item.props["childrenKey"] || item.props["children-key"];
     // 返回统一的key名称
     return {
-      labelKey: labelKey || 'label',
-      valueKey: valueKey || 'value',
-      childrenKey: childrenKey || 'children'
-    }
-  }
+      labelKey: labelKey || "label",
+      valueKey: valueKey || "value",
+      childrenKey: childrenKey || "children",
+    };
+  };
 
   return {
     getField,
@@ -223,6 +227,6 @@ export default function ({props, emits, formRef}) {
     getOptions,
     setOptions,
     getRequest,
-    setRequest
-  }
+    setRequest,
+  };
 }

@@ -1,12 +1,12 @@
 <template>
-  <el-form class="easy-form" ref="formRef" :model="formModel" :rules="formRules" v-bind="formLayout" @submit.prevent>
-    <el-row class="easy-form-row" type="flex" v-bind="formLayout.row">
+  <el-form class="form-create" ref="formRef" :model="formModel" :rules="formRules" v-bind="formLayout" @submit.prevent>
+    <el-row class="form-create-row" type="flex" v-bind="formLayout.row">
       <!--默认插槽-->
       <slot v-bind="{ formModel, formFields, formRules }" />
       <!--字段配置-->
-      <template v-for="item in formFields" :key="`easy-form-item-${item.field}`">
-        <easy-form-item
-          :ref="`easy-form-item-${item.field}`"
+      <template v-for="item in formFields" :key="`form-create-item-${item.field}`">
+        <form-create-item
+          :ref="`form-create-item-${item.field}`"
           :item="item"
           :model="formModel"
           :rules="formRules"
@@ -16,7 +16,7 @@
           <template v-if="item.type === 'slot'" #[getSlotName(item)]="slotProps">
             <slot :name="getSlotName(item)" v-bind="{ formModel, formFields, formRules, ...slotProps }" />
           </template>
-        </easy-form-item>
+        </form-create-item>
       </template>
     </el-row>
   </el-form>
@@ -24,8 +24,8 @@
 
 <script setup>
 import { computed, ref, onMounted, provide, getCurrentInstance, useSlots } from "vue";
-import useEasyForm from "@/hooks/easy-form.js";
-import EasyFormItem from "./form-item.vue";
+import useFormCreate from "@/hooks/form-create.js";
+import FormCreateItem from "./form-item.vue";
 
 defineOptions({ name: "FormCreate" });
 
@@ -58,7 +58,7 @@ const props = defineProps({
 // 事件
 const emits = defineEmits(["submit", "failed", "reset", "cancel"]);
 
-// 获得easy-form-item的插槽名称
+// 获得form-create-item的插槽名称
 const getSlotName = computed(() => {
   return (item) => {
     // 如果该字段配置了slotName，则用slotName，否则默认用field当做插槽名
@@ -103,7 +103,7 @@ const formFields = computed(() => {
   return props.fields;
 });
 
-// easy-form组件ref
+// form-create组件ref
 const formRef = ref(null);
 
 // 注入到子组件表单实例
@@ -128,15 +128,15 @@ const initFormModel = () => {
   }
 };
 
-// 使用easy-form表单组件的hooks
-const easyForm = useEasyForm({ props, emits, formRef: proxy });
+// 使用form-create表单组件的hooks
+const formCreate = useFormCreate({ props, emits, formRef: proxy });
 
 onMounted(() => {
   initFormModel();
 
   // 将操作字段方法绑定到当前实例
-  for (let name in easyForm) {
-    proxy[name] = easyForm[name];
+  for (let name in formCreate) {
+    proxy[name] = formCreate[name];
   }
 });
 
@@ -236,7 +236,7 @@ const _resetCascader = () => {
   // fix：重置时恢复el-cascader的初始状态
   let list = formFields.value.filter((v) => v.type === "cascader");
   for (let item of list) {
-    let fieldRef = easyForm.getFieldRef(item.field);
+    let fieldRef = formCreate.getFieldRef(item.field);
     if (fieldRef) {
       // 清空并收起级联的菜单
       let cascaderPanelRef = fieldRef.ref.$refs[item.field].cascaderPanelRef;
@@ -247,10 +247,10 @@ const _resetCascader = () => {
 
 // 暴露组件方法
 defineExpose({
-  // easy-form表单ref
+  // form-create表单ref
   formRef: proxy,
 
-  // easy-form表单方法
+  // form-create表单方法
   submit,
   reset,
   cancel,
@@ -260,8 +260,8 @@ defineExpose({
   resetFields,
   clearValidate,
 
-  // easy-form提供的操作字段方法
-  ...easyForm,
+  // form-create提供的操作字段方法
+  ...formCreate,
 });
 </script>
 

@@ -35,27 +35,26 @@ export default {
     /* callback 回调 */
     // 表单提交
     onSubmit(formData) {
-      console.log('onSubmit回调', formData)
+      console.log("onSubmit回调", formData);
     },
     // 表单提交成功
     onSubmitSuccess(formData) {
-      console.log('onSubmitSuccess回调', formData)
+      console.log("onSubmitSuccess回调", formData);
     },
     // 表单提交失败
     onSubmitFailed(error) {
-      console.log('onSubmitFailed回调', error)
+      console.log("onSubmitFailed回调", error);
     },
     // 表单重置
     onReset() {
-      console.log('onReset回调')
+      console.log("onReset回调");
     },
     // 表单取消
     onCancel() {
-      console.log('onCancel回调')
-      this.easyFormModal = false
+      console.log("onCancel回调");
     }
   }
-}
+};
 ```
 
 ### 实例方法
