@@ -298,6 +298,7 @@ import { ref, computed, onMounted, nextTick, getCurrentInstance, inject } from "
 import useFormCreateItem from "@/hooks/form-create-item.js";
 import InputNumberRange from "./components/input-number-range.vue";
 import axios from "axios";
+import { getTargetValueByPath, setTargetValueByPath } from "@ivu-plus/i-utils";
 
 // element-plus组件语言为中文
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
@@ -387,10 +388,10 @@ const formFieldWidth = computed(() => {
 // 当前字段绑定的值
 const currentValue = computed({
   get() {
-    return _getTargetByPath(formModel.value, formItem.value.field);
+    return getTargetValueByPath(formModel.value, formItem.value.field);
   },
   set(value) {
-    _setTargetByPath(formModel.value, formItem.value.field, `'${value}'`);
+    setTargetValueByPath(formModel.value, formItem.value.field, `'${value}'`);
   },
 });
 
@@ -533,7 +534,7 @@ const _fieldRequest = async () => {
   });
   // 通过传递的数据路径名称，动态获取指定的属性，比如data.dicItems
   if (res && res.data && typeof res.data === "object") {
-    formItem.value.props["options"] = _getTargetByPath(res, formItem.value.request.dataName);
+    formItem.value.props["options"] = getTargetValueByPath(res, formItem.value.request.dataName);
   }
   fieldLoading.value = false;
 };
@@ -586,7 +587,7 @@ const _parseEffect = async (value, eventName) => {
       // 获取到对象中的属性路径，如 'deptOid.props.disabled=true' 会获取到'props.disabled'
       let fieldStr = attrKey.substring(attrKey.indexOf(".") + 1);
       // 根据属性路径，修改对应的值，注意：一些影响页面视图的属性在修改时，目前是需要在字段配置中有初始值
-      item && _setTargetByPath(item, fieldStr, attrValue);
+      item && setTargetValueByPath(item, fieldStr, attrValue);
     });
   }
 };

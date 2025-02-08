@@ -71,7 +71,7 @@ export default {
     },
   ],
   // 排除模块
-  external: ["vue", "axios", /^element-plus\/.*/],
+  external: ["vue", "axios", /^element-plus\/.*/, "@ivu-plus/i-utils"],
   // 使用插件
   plugins: [
     vue(),

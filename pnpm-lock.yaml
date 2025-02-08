@@ -11,6 +11,9 @@ importers:
       '@element-plus/icons-vue':
         specifier: ^2.3.1
         version: 2.3.1(vue@3.5.13(typescript@5.7.2))
+      '@ivu-plus/i-utils':
+        specifier: ^1.0.3
+        version: 1.0.3
       axios:
         specifier: ^1.7.9
         version: 1.7.9
@@ -1057,6 +1060,9 @@ packages:
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
+
+  '@ivu-plus/i-utils@1.0.3':
+    resolution: {integrity: sha512-0Z3SpVRp8IaGRYdIPC20E4uF6rsUWiBP6aGl7gHFCv+8F0+lzCGHjcdajQDxeKnku2BIe1S330Q83r+esmbtBw==}
 
   '@jridgewell/gen-mapping@0.3.5':
     resolution: {integrity: sha512-IzL8ZoEDIBRWEzlCcRhOaCupYyN5gdIK+Q6fbFdPDg6HqX6jpkItn7DFIpW9LQzXG6Df9sA7+OKnq0qlz/GaQg==}
@@ -4389,6 +4395,8 @@ snapshots:
       strip-ansi-cjs: strip-ansi@6.0.1
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
+
+  '@ivu-plus/i-utils@1.0.3': {}
 
   '@jridgewell/gen-mapping@0.3.5':
     dependencies:
