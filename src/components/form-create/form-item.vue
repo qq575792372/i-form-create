@@ -19,6 +19,16 @@
             :label-width="formItem.labelWidth || formLayout.labelWidth"
             :rules="formItem.rules || formRules[formItem.field]"
           >
+            <!--表单标签插槽-->
+            <template #label>
+              <div v-if="slots.label" class="form-create-item-label" v-tooltips="{ enable: formLayout.showTooltips }">
+                <slot name="label" :formItem="formItem" />
+              </div>
+              <div v-else class="form-create-item-label" v-tooltips="{ enable: formLayout.showTooltips }">
+                {{ formItem.label }}
+              </div>
+            </template>
+
             <!-- Text 文本 -->
             <template v-if="formItem.type === 'text'">
               <div class="content">
@@ -294,11 +304,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick, getCurrentInstance, inject } from "vue";
+import { ref, computed, onMounted, nextTick, getCurrentInstance, inject, useSlots } from "vue";
 import useFormCreateItem from "@/hooks/form-create-item.js";
 import InputNumberRange from "./components/input-number-range.vue";
 import axios from "axios";
-import { getTargetValueByPath, setTargetValueByPath } from "@ivu-plus/i-utils";
+import { Tooltips as vTooltips } from "@/directives/index.js";
+import { isFunction, isFunctionString, getTargetValueByPath, setTargetValueByPath } from "@ivu-plus/i-utils";
 
 // element-plus组件语言为中文
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
@@ -307,6 +318,8 @@ const elementPlusLocale = ref(zhCn);
 
 defineOptions({ name: "FormCreateItem" });
 
+// 插槽
+const slots = useSlots();
 // 属性
 const props = defineProps({
   // 当前字段配置
@@ -357,12 +370,12 @@ const fieldEvents = computed(() => {
       if (formItem.value.type === "input-number") {
         args = ["newValue", "oldValue", "item", "ref", "formRef"];
       }
-      // 是函数，直接回调
-      if (_isFunction(formItem.value.events[name])) {
+      // 是函数类型，直接回调
+      if (isFunction(formItem.value.events[name])) {
         return formItem.value.events[name](...event, formItem.value, proxy, formRef);
       }
-      // 是函数字符串，需要处理转换下，再回调
-      else if (_isFunctionStr(formItem.value.events[name])) {
+      // 是函数字符串类型，需要处理转换下，再回调
+      else if (isFunctionString(formItem.value.events[name])) {
         const fn = new Function(...args, "return " + formItem.value.events[name]);
         // 传递组件回调的参数以及当前字段配置
         return fn.call(proxy, ...event, formItem.value, proxy, formRef)(...event, formItem.value, proxy, formRef);
@@ -558,11 +571,11 @@ const _parseEffect = async (value, eventName) => {
   if (!formItem.value.effects || !formItem.value.effects[eventName]) return;
 
   // 是函数，直接执行
-  if (_isFunction(formItem.value.effects[eventName])) {
+  if (isFunction(formItem.value.effects[eventName])) {
     return formItem.value.effects[eventName](value, formItem.value, proxy, formRef);
   }
   // 是函数字符串，需要处理转换下，再执行
-  else if (_isFunctionStr(formItem.value.effects[eventName])) {
+  else if (isFunctionString(formItem.value.effects[eventName])) {
     let effectFn = new Function("value", "item", "ref", "formRef", "return " + formItem.value.effects[eventName]);
     return effectFn.call(proxy, value, formItem.value, proxy, formRef)(value, formItem.value, proxy, formRef);
   }
@@ -668,100 +681,6 @@ const _filterOptions = (source) => {
     return getExcludeData(source);
   } else {
     return [];
-  }
-};
-
-/**
- * 根据字符串属性路径获取目标对象的值
- * @example
- * let res = {code:200, data:{rows:[], pages:{current:1,pageSize:20}}}
- * @param {Object} target 目标对象
- * @param {String} path 字符串属性路径
- * @returns {Object} 返回目标对象
- */
-const _getTargetByPath = (target, path = "data") => {
-  const paths = (path || "data").split(".");
-  let data = target;
-  // 属性总个数
-  let lastIndex = paths.length - 1;
-  for (const index in paths) {
-    // 判断属性是取的数组
-    let pathArrayMatch = paths[index].match(/^(\w+)\[(\d+)]$/);
-    if (pathArrayMatch) {
-      let propName = pathArrayMatch[1];
-      let propIndex = parseInt(pathArrayMatch[2], 10);
-      if (!data[propName]) {
-        data[propName] = [];
-      }
-      // 逐层向下找到对应属性的值
-      data = data[propName][propIndex];
-    }
-    // 判断属性是取的对象属性
-    else {
-      if (!data[paths[index]]) {
-        data[paths[index]] = Number(index) !== lastIndex ? {} : undefined;
-      }
-      // 逐层向下找到对应属性的值
-      data = data[paths[index]];
-    }
-  }
-  return data;
-};
-
-/**
- * 根据字符串属性路径设置目标对象的值
- * @example
- * let res = {code:200, data:{rows:[], pages:{current:1,pageSize:20}}}
- * @param {Object} target 目标对象
- * @param {String} path 字符串属性路径
- * @param {*} value 值
- */
-const _setTargetByPath = (target, path, value) => {
-  const paths = (path || "data").split(".");
-  // 变量表达式拼接，最终结果如：target['personInfo']['personName']='xxx';
-  let fxStr = "";
-  for (const name of paths) {
-    fxStr += `['${name}']`;
-  }
-  const fn = new Function("target", `target${fxStr}=${value}`);
-  fn(target);
-};
-
-/**
- * 判断是函数
- * @private
- * @description 支持普通函数，异步函数，箭头函数
- * @param fn
- * @returns {boolean}
- */
-const _isFunction = (fn) => {
-  return typeof fn === "function";
-};
-/**
- * 判断是否是函数字符串
- * @private
- * @description 支持普通函数，异步函数，箭头函数
- * @param {String} fnStr 函数字符串
- * @returns {Boolean} 返回结果
- */
-const _isFunctionStr = (fnStr) => {
-  // 先通过正则表达式验证
-  const combinedRegex = new RegExp(
-    /^(function\([\w,\s]*\)\s*{[\s\S]*})|^\(\s*([\w,\s]*)\s*\)\s*=>\s*{[\s\S]*}|^(async\s*function\s*\([\w,\s]*\)\s*{[\s\S]*}\)\s*{[\s\S]*})|^(async\(\s*([\w,\s]*)\s*\)\s*=>\s*{[\s\S]*})$/,
-  );
-  let flag = combinedRegex.test(fnStr);
-
-  // 再通过new Function()验证是个可执行的函数
-  if (flag) {
-    try {
-      new Function(`return ${fnStr}`);
-      return true;
-    } catch (e) {
-      // 如果发生错误，比如语法错误，那么这不是一个有效的函数
-      return false;
-    }
-  } else {
-    return false;
   }
 };
 

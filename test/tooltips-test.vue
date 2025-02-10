@@ -1,7 +1,6 @@
 <template>
   <div class="tooltips-demo">
     <div class="content">
-      <div class="title">提示方向</div>
       <el-row>
         <el-col :span="6">
           <div>提示方向-上</div>

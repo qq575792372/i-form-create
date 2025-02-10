@@ -1,5 +1,8 @@
 <template>
-  <form-create :model="formConfig.model" :fields="formConfig.fields" />
+  <form-create :model="formConfig.model" :fields="formConfig.fields" :layout="formConfig.layout">
+    <!--自定义表单项的标签插槽-->
+    <!--<template #label="{ formItem }">{{ formItem.label }}</template>-->
+  </form-create>
 </template>
 
 <script setup>
@@ -28,10 +31,10 @@ const formConfig = ref({
   fields: [
     {
       field: "type",
-      label: "请假类型",
+      label: "请假类型，这是一个很长的文本标签，会自动截取",
       type: "select",
       defaultValue: "1",
-      span: 8,
+      span: 12,
       props: {
         placeholder: "请选择请假类型",
         options: [
@@ -52,12 +55,17 @@ const formConfig = ref({
         labelKey: "name",
         valueKey: "type",
       },
+      events: {
+        change: (val, item, ref, formRef) => {
+          console.log(111, val, item, ref, formRef);
+        },
+      },
     },
     {
       field: "days",
       label: "请假天数",
       type: "input",
-      span: 8,
+      span: 12,
       defaultValue: "2",
       props: {
         placeholder: "请输入请假天数",
@@ -68,7 +76,7 @@ const formConfig = ref({
       label: "请假原因",
       type: "textarea",
       defaultValue: "过年请假",
-      span: 8,
+      span: 24,
       props: {
         rows: 4,
         placeholder: "请输入请假原因",
@@ -149,6 +157,10 @@ const formConfig = ref({
       ],
     },
   ],
+  layout: {
+    labelWidth: 200,
+    showTooltips: true, // 开启表单项标签超出显示功能
+  },
 });
 </script>
 

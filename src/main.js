@@ -11,6 +11,7 @@ app.use(router);
 
 // element-plus需要手动引入的样式
 import "element-plus/es/components/message/style/css";
+import "element-plus/es/components/tooltip/style/css";
 import "element-plus/theme-chalk/el-message-box.css";
 import { ElMessage, ElMessageBox } from "element-plus";
 
@@ -27,7 +28,6 @@ app.config.globalProperties.$message = ElMessage;
 app.config.globalProperties.$alert = ElMessageBox.alert;
 app.config.globalProperties.$confirm = ElMessageBox.confirm;
 app.config.globalProperties.$prompt = ElMessageBox.prompt;
-
 // 绑定axios的
 app.config.globalProperties.$request = axios;
 

@@ -12,6 +12,11 @@
           :rules="formRules"
           :layout="formLayout"
         >
+          <!--表单项标签插槽-->
+          <template v-if="slots.label" #label>
+            <slot name="label" v-bind="{ formItem: item }" />
+          </template>
+
           <!--字段自定义插槽-->
           <template v-if="item.type === 'slot'" #[getSlotName(item)]="slotProps">
             <slot :name="getSlotName(item)" v-bind="{ formModel, formFields, formRules, ...slotProps }" />
@@ -76,6 +81,7 @@ const formLayout = computed(() => {
     hideRequiredAsterisk: false, // 是否隐藏必填星号
     requireAsteriskPosition: "left", // 必填星号的位置
     showMessage: true, // 是否显示校验错误信息
+    showTooltips: true, // 是否显示标签超出提示
     statusIcon: false, // 是否在输入框中显示校验反馈图标
     validateOnRuleChange: true, // 是否在校验属性改变后立即触发验证
     size: "default", // 表单尺寸

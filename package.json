@@ -1,7 +1,7 @@
 {
   "name": "@ivu-plus/i-form-create-test",
   "moduleName": "FormCreate",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "前端动态表单组件",
   "author": "<gao911222@163.com>",
   "license": "MIT",
@@ -14,7 +14,7 @@
     "build": "rimraf dist && rollup -c --bundleConfigAsCjs"
   },
   "dependencies": {
-    "@ivu-plus/i-utils": "^1.0.3",
+    "@ivu-plus/i-utils": "^1.0.4",
     "@element-plus/icons-vue": "^2.3.1",
     "element-plus": "^2.9.4",
     "axios": "^1.7.9",
