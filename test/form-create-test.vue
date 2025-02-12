@@ -30,6 +30,25 @@ const formConfig = ref({
   },
   fields: [
     {
+      field: "type1",
+      label: "请假类型",
+      type: "select",
+      span: 8,
+      props: {
+        placeholder: "请选择请假类型",
+        span: 12,
+        labelKey: "dictionaryName",
+        valueKey: "dictionaryCode",
+      },
+      request: {
+        url: "http://192.183.8.191:6060/dic/getDicTree?type=vacationType",
+        headers: {
+          "user-token": "this a custom user token",
+        },
+        dataName: "data.result[0].children",
+      },
+    },
+    {
       field: "type",
       label: "请假类型，这是一个很长的文本标签，会自动截取",
       type: "select",

@@ -533,8 +533,10 @@ const _fieldRequest = async () => {
   fieldLoading.value = true;
   // 动态api请求参数
   const api = {
+    ...formItem.value.request,
     url: formItem.value.request.url,
     method: formItem.value.request.method || "get",
+    headers: formItem.value.request.headers || {},
   };
   if (api.method === "get") {
     api.params = formItem.value.request.params;

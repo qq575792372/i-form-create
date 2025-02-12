@@ -244,8 +244,8 @@ const onMouseEnter = function (e) {
   }
 
   /* 第三步：tooltip绑定鼠标事件，用于延迟关闭 */
-  tooltipsElem.addEventListener("mouseenter", onTooltipMouseEnter);
-  tooltipsElem.addEventListener("mouseleave", onTooltipMouseLeve);
+  tooltipsElem && tooltipsElem.addEventListener("mouseenter", onTooltipMouseEnter);
+  tooltipsElem && tooltipsElem.addEventListener("mouseleave", onTooltipMouseLeve);
 };
 
 /**
